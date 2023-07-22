@@ -3,8 +3,8 @@ import React from 'react'
 import Explorer from './Explorer'
 
 const metadata = {
-	title: 'BIOrbit',
-	description: 'Monitoring and guarding'
+	title: 'Agrosecurity',
+	description: 'Weather based insurence'
 }
 
 export default function Home(): JSX.Element {
