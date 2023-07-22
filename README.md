@@ -30,5 +30,6 @@ yarn dev
 
 ## Authors 🏗
 
-[rookiecol] (https://github.com/RookieCol)
+[rookiecol](https://github.com/RookieCol)
+
 [salviega](https://github.com/salviega)
