@@ -4,7 +4,8 @@ Agrosecurity: weather based insurence
 
 ### URL
 
-agrosecurity-pyw8ba4vp-salviega.vercel.app
+https://agrosecurity-pyw8ba4vp-salviega.vercel.app/
+
 
 ## Quick start 🏄
 

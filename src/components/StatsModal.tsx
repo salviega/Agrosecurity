@@ -16,9 +16,16 @@ import {
 	Tbody,
 	Td,
 	Tr,
-	Text
+	Text,
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverHeader,
+	PopoverArrow,
+	PopoverCloseButton,
+	PopoverBody
 } from '@chakra-ui/react'
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons'
+import { DeleteIcon, EditIcon, InfoIcon } from '@chakra-ui/icons'
 
 import Blockies from 'react-blockies'
 import { BIOrbit } from '../../@types/typechain-types'
@@ -29,6 +36,9 @@ import {
 } from '@/models/monitoring-area.model'
 import { useAccount } from 'wagmi'
 import { Plot } from './Plot'
+import { useEffect, useState } from 'react'
+import weatherData from '../assets/json/data.json'
+import { Weather } from '@/models/weather.model'
 
 interface Coordinates {
 	latitude: string
@@ -58,11 +68,21 @@ export function StatsModal(props: Props) {
 
 	const { address } = useAccount()
 
+	const [weather, setWeather] = useState<Weather | null | any>(null)
+
 	let coordinates: Coordinates | null = null
 
 	if (geoJson?.properties.footprint) {
 		coordinates = getLastCoordinates(geoJson.properties.footprint)
 	}
+
+	const getWeather = () => {
+		console.log(weather)
+	}
+
+	useEffect(() => {
+		setWeather(weatherData)
+	}, [])
 
 	return (
 		<>
@@ -160,30 +180,48 @@ export function StatsModal(props: Props) {
 									overflowY='auto'
 								>
 									<Heading fontSize='lg' color='gray.700'>
-										Renters
+										Weather data
 									</Heading>
 									<Spacer />
 									<Table size='sm'>
 										<Tbody>
-											{geoJson?.properties.rentInfo?.map(
-												(rent: RentInfo, index: number) => {
-													return (
-														<>
-															<Tr key={index}>
-																<Td fontSize={'xs'}>
-																	<Blockies seed={rent.renter} size={8} />
+											{weatherData?.data?.values &&
+												Object.entries(weatherData.data.values).map(
+													([key, value], index) => {
+														return (
+															<Tr key={index} width={'421.141px'}>
+																<Td fontSize={'xs'} width={'421.141px'}>
+																	{key}{' '}
+																	<Popover placement='top-start'>
+																		<PopoverTrigger>
+																			<InfoIcon
+																				w={2}
+																				h={2}
+																				color={'black.700'}
+																				cursor={'pointer'}
+																				_hover={{ color: 'black.400' }}
+																			></InfoIcon>
+																		</PopoverTrigger>
+																		<PopoverContent w={400}>
+																			<PopoverHeader fontWeight='semibold'>
+																				{key}
+																			</PopoverHeader>
+																			<PopoverArrow />
+																			<PopoverBody>
+																				Lorem ipsum dolor sit amet, consectetur
+																				adipisicing elit, sed do eiusmod tempor
+																				incididunt ut labore et dolore.
+																			</PopoverBody>
+																		</PopoverContent>
+																	</Popover>
 																</Td>
 																<Td fontSize={'xs'} textAlign={'right'}>
-																	{rent.renter}
+																	{value.toString()}
 																</Td>
 															</Tr>
-														</>
-													)
-												}
-											)}
-											{geoJson?.properties?.rentInfo &&
-												geoJson?.properties?.rentInfo?.length < 5 &&
-												getRow(geoJson?.properties?.rentInfo?.length)}
+														)
+													}
+												)}
 										</Tbody>
 									</Table>
 								</TableContainer>
