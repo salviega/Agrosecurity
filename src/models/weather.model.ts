@@ -33,3 +33,7 @@ export interface Weather {
 	data: WeatherData
 	location: Location
 }
+
+export interface WeatherVariableDescription {
+	[key: string]: string
+}

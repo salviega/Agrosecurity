@@ -33,8 +33,11 @@ import { useAccount } from 'wagmi'
 import { Plot } from './Plot'
 import { useEffect, useState } from 'react'
 import weatherData from '../assets/json/weatherData.json'
-import weatherVariableDescription from '../assets/json/weather-variables-description.json'
-import { Weather } from '@/models/weather.model'
+import { Weather, WeatherVariableDescription } from '@/models/weather.model'
+import weatherVariableDescriptionJson from '../assets/json/weather-variables-description.json'
+
+const weatherVariableDescription: WeatherVariableDescription =
+	weatherVariableDescriptionJson
 
 interface Coordinates {
 	latitude: string
