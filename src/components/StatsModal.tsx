@@ -10,34 +10,29 @@ import {
 	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
+	PopoverArrow,
+	PopoverBody,
+	PopoverContent,
+	PopoverHeader,
+	PopoverTrigger,
 	Spacer,
+	Spinner,
 	Table,
 	TableContainer,
 	Tbody,
 	Td,
 	Tr,
 	Text,
-	Popover,
-	PopoverTrigger,
-	PopoverContent,
-	PopoverHeader,
-	PopoverArrow,
-	PopoverCloseButton,
-	PopoverBody
+	Popover
 } from '@chakra-ui/react'
 import { DeleteIcon, EditIcon, InfoIcon } from '@chakra-ui/icons'
 
-import Blockies from 'react-blockies'
 import { BIOrbit } from '../../@types/typechain-types'
-import {
-	Footprint,
-	MonitoringArea,
-	RentInfo
-} from '@/models/monitoring-area.model'
+import { Footprint, MonitoringArea } from '@/models/monitoring-area.model'
 import { useAccount } from 'wagmi'
 import { Plot } from './Plot'
 import { useEffect, useState } from 'react'
-import weatherData from '../assets/json/data.json'
+import weatherData from '../assets/json/weatherData.json'
 import weatherVariableDescription from '../assets/json/weather-variables-description.json'
 import { Weather } from '@/models/weather.model'
 
@@ -69,6 +64,7 @@ export function StatsModal(props: Props) {
 
 	const { address } = useAccount()
 
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [weather, setWeather] = useState<Weather | null | any>(null)
 
 	let coordinates: Coordinates | null = null
@@ -77,8 +73,12 @@ export function StatsModal(props: Props) {
 		coordinates = getLastCoordinates(geoJson.properties.footprint)
 	}
 
-	const getWeather = () => {
-		console.log(weather)
+	const getHistoriacalWeather = () => {
+		setIsLoading(true)
+		setTimeout(() => {
+			console.log(weather)
+			setIsLoading(false)
+		}, 1000)
 	}
 
 	useEffect(() => {
@@ -181,7 +181,7 @@ export function StatsModal(props: Props) {
 									overflowY='auto'
 								>
 									<Heading fontSize='lg' color='gray.700'>
-										Weather data
+										Real Time Weather
 									</Heading>
 									<Spacer />
 									<Table size='sm'>
@@ -191,8 +191,22 @@ export function StatsModal(props: Props) {
 													([key, value]: [string, any], index: number) => {
 														return (
 															<Tr key={index}>
-																<Td fontSize={'xs'} width={'409.141px'}>
-																	{formatKey(key)}
+																<Td
+																	fontSize={'xs'}
+																	width={'409.141px'}
+																	display={'flex'}
+																	alignItems={'center'}
+																>
+																	<Text
+																		_hover={{
+																			textDecoration: 'underline',
+																			color: 'blue.600',
+																			cursor: 'pointer'
+																		}}
+																		onClick={getHistoriacalWeather}
+																	>
+																		{formatKey(key)}
+																	</Text>
 																	<Popover
 																		placement='top-start'
 																		trigger='hover'
@@ -240,9 +254,27 @@ export function StatsModal(props: Props) {
 								justifyContent={'center'}
 							>
 								<Heading fontSize='lg' color='gray.700'>
-									Cover Forest
+									Historical Weather
 								</Heading>
-								<Plot geoJson={geoJson} />
+								{isLoading ? (
+									<Box
+										width={'620px'}
+										height={'250px'}
+										display='flex'
+										alignItems='center'
+										justifyContent='center'
+									>
+										<Spinner
+											thickness='4px'
+											speed='0.8s'
+											emptyColor='gray.200'
+											color='blue.600'
+											size='xl'
+										/>
+									</Box>
+								) : (
+									<Plot geoJson={geoJson} />
+								)}
 							</Box>
 						</Box>
 						{geoJson?.properties?.owner === address && (
@@ -281,39 +313,6 @@ export function StatsModal(props: Props) {
 			</Modal>
 		</>
 	)
-}
-
-function getRow(index: number): JSX.Element[] {
-	const returns: number = 5 - index
-	const elements: JSX.Element[] = []
-
-	if (returns === 5) {
-		for (let i = 0; i < returns; i++) {
-			elements.push(
-				<>
-					<Tr>
-						<Td height={'48.5px'} fontSize={'xs'}></Td>
-						<Td width={'389.141px'} fontSize={'xs'}>
-							{''}
-						</Td>
-					</Tr>
-				</>
-			)
-		}
-	} else {
-		for (let i = 0; i < returns; i++) {
-			elements.push(
-				<>
-					<Tr>
-						<Td height={'48.5px'} fontSize={'xs'}></Td>
-						<Td fontSize={'xs'}>{''}</Td>
-					</Tr>
-				</>
-			)
-		}
-	}
-
-	return elements
 }
 
 function getLastCoordinates(footprint: Footprint[]): Coordinates {
