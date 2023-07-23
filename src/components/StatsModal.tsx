@@ -38,6 +38,7 @@ import { useAccount } from 'wagmi'
 import { Plot } from './Plot'
 import { useEffect, useState } from 'react'
 import weatherData from '../assets/json/data.json'
+import weatherVariableDescription from '../assets/json/weather-variables-description.json'
 import { Weather } from '@/models/weather.model'
 
 interface Coordinates {
@@ -187,30 +188,36 @@ export function StatsModal(props: Props) {
 										<Tbody>
 											{weatherData?.data?.values &&
 												Object.entries(weatherData.data.values).map(
-													([key, value], index) => {
+													([key, value]: [string, any], index: number) => {
 														return (
-															<Tr key={index} width={'421.141px'}>
-																<Td fontSize={'xs'} width={'421.141px'}>
-																	{key}{' '}
-																	<Popover placement='top-start'>
+															<Tr key={index}>
+																<Td fontSize={'xs'} width={'409.141px'}>
+																	{formatKey(key)}
+																	<Popover
+																		placement='top-start'
+																		trigger='hover'
+																	>
 																		<PopoverTrigger>
 																			<InfoIcon
 																				w={2}
 																				h={2}
+																				marginLeft={1}
 																				color={'black.700'}
 																				cursor={'pointer'}
 																				_hover={{ color: 'black.400' }}
 																			></InfoIcon>
 																		</PopoverTrigger>
-																		<PopoverContent w={400}>
+																		<PopoverContent>
 																			<PopoverHeader fontWeight='semibold'>
-																				{key}
+																				{formatKey(key)}
 																			</PopoverHeader>
 																			<PopoverArrow />
 																			<PopoverBody>
-																				Lorem ipsum dolor sit amet, consectetur
-																				adipisicing elit, sed do eiusmod tempor
-																				incididunt ut labore et dolore.
+																				<Text
+																					style={{ whiteSpace: 'pre-wrap' }}
+																				>
+																					{weatherVariableDescription[key]}
+																				</Text>
 																			</PopoverBody>
 																		</PopoverContent>
 																	</Popover>
@@ -319,4 +326,11 @@ function getLastCoordinates(footprint: Footprint[]): Coordinates {
 		latitude: lastFootprint.latitude,
 		longitude: lastFootprint.longitude
 	}
+}
+
+function formatKey(key: string): string {
+	let words: string[] = key.split(/(?=[A-Z])/) // This splits the string into words at each uppercase letter.
+	return words
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(' ')
 }

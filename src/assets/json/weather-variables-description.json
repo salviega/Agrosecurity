@@ -1,0 +1,22 @@
+{
+	"cloudBase": "The lowest altitude of the visible portion of a cloud (above ground level)",
+	"cloudCeiling": "The highest altitude of the visible portion of a cloud (above ground level)",
+	"cloudCover": "The fraction of the sky obscured by clouds when observed from a particular location",
+	"dewPoint": "The temperature to which air must be cooled to become saturated with water vapor (at 2m)",
+	"freezingRainIntensity": "The measure of the intensity of freezing rain by calculating the amount of freezing rain that would fall over a given interval of time if the freezing rain intensity were constant over that time period. The rate is expressed in terms of length (depth) per unit time, in millimeters per hour, or inches per hour.",
+	"humidity": "The concentration of water vapor present in the air",
+	"precipitationProbability": "Probability of precipitation represents the chance of >0.0254 cm (0.01 in.) of liquid equivalent precipitation at a radius surrounding a point location over a specific period of time.",
+	"pressureSurfaceLevel": "The force exerted against a surface by the weight of the air above the surface (at the surface level)",
+	"rainIntensity": "The measure of the intensity of rainfall by calculating the amount of rain that would fall over a given interval of time if the rain intensity were constant over that time period. The rate is expressed in terms of length (depth) per unit time, in millimeters per hour, or inches per hour.",
+	"sleetIntensity": "The measure of the intensity of sleet (ice pellets) by calculating the amount of sleet that would fall over a given interval of time if the sleet intensity were constant over that time period. The rate is expressed in terms of length (depth) per unit time, in millimeters per hour, or inches per hour.",
+	"snowIntensity": "The measure of the intensity of snowfall by calculating the amount of snow that would fall over a given interval of time if the snow intensity were constant over that time period. The rate is expressed in terms of length (depth) per unit time, in millimeters per hour, or inches per hour.",
+	"temperature": "The 'real' temperature measurement (at 2m)",
+	"temperatureApparent": "The temperature equivalent perceived by humans, caused by the combined effects of air temperature, relative humidity, and wind speed (at 2m). Also known as 'feels like'.",
+	"uvHealthConcern": "When the predicted UV index is within these numerical ranges, the recommended need for protection is indicated by the qualitative description of the values.",
+	"uvIndex": "Standard measurement of the strength of sunburn producing UV radiation at a particular place and time.",
+	"visibility": "The measure of the distance at which an object or light can be clearly discerned",
+	"weatherCode": "The text description that conveys the most prominent weather condition",
+	"windDirection": "The direction from which it originates, measured in degrees clockwise from due north (at 10m)",
+	"windGust": "The maximum brief increase in the speed of the wind, usually less than 20 seconds (at 10m)",
+	"windSpeed": "The fundamental atmospheric quantity caused by air moving from high to low pressure, usually due to changes in temperature (at 10m)"
+}
