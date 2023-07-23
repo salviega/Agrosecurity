@@ -35,6 +35,7 @@ import { useEffect, useState } from 'react'
 import { Weather, WeatherVariableDescription } from '@/models/weather.model'
 import weatherData from '../assets/json/weatherData.json'
 import weatherVariableDescriptionJson from '../assets/json/weather-variables-description.json'
+import axios, { AxiosResponse } from 'axios'
 
 const weatherVariableDescription: WeatherVariableDescription =
 	weatherVariableDescriptionJson
@@ -84,13 +85,23 @@ export function StatsModal(props: Props) {
 		}, 1000)
 	}
 
+	const fetchWeatherData = async (coordinates: string) => {
+		setIsLoading(true)
+		try {
+			const response: AxiosResponse<any, any> = await axios.get(
+				`https://api.tomorrow.io/v4/weather/realtime?location=${coordinates}&apikey=${process.env.NEXT_PUBLIC_TOMORROW_API_KEY}`
+			)
+			setWeather(response.data)
+			setIsLoading(false)
+		} catch (error) {
+			setWeather(weatherData)
+			setIsLoading(false)
+		}
+	}
+
 	useEffect(() => {
 		if (isOpen) {
-			setIsLoading(true)
-			setTimeout(() => {
-				setWeather(weatherData)
-				setIsLoading(false)
-			}, 1000)
+			fetchWeatherData(`${coordinates?.latitude},${coordinates?.longitude}`)
 		} else {
 			setWeather(null)
 		}
@@ -194,7 +205,6 @@ export function StatsModal(props: Props) {
 										<strong>Owner</strong> {geoJson?.properties?.owner}{' '}
 									</Text>
 								</Box>
-
 								<Box
 									padding={1}
 									minW={'max-content'}
@@ -209,9 +219,14 @@ export function StatsModal(props: Props) {
 											height={270} // Adjust this value according to the height of a single row multiplied by 6
 											overflowY='auto'
 										>
-											<Heading fontSize='lg' color='gray.700'>
-												Real Time Weather
-											</Heading>
+											<Box>
+												<Heading marginRight={1} fontSize='lg' color='gray.700'>
+													Real Time Weather
+												</Heading>
+												<Text fontSize={'xs'}>
+													{new Date(weather?.data?.time).toLocaleString()}
+												</Text>
+											</Box>
 											<Spacer />
 											<Table size='sm'>
 												<Tbody>
