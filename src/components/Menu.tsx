@@ -259,7 +259,7 @@ export default function Menu(props: Props): JSX.Element {
 			overflow={'hidden'}
 		>
 			<Center
-				borderBottomColor={'blue.600'}
+				borderBottomColor={'gray.600'}
 				borderBottomWidth={'1px'}
 				borderBottomStyle={'solid'}
 				p={2}
