@@ -6,6 +6,9 @@ Agrosecurity: weather based insurence
 
 https://agrosecurity-pyw8ba4vp-salviega.vercel.app/
 
+Agrosecurity - contracts:
+
+Repository url: https://github.com/salviega/Agrosecurity-contracts
 
 ## Quick start 🏄
 
