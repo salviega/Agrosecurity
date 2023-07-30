@@ -32,7 +32,11 @@ import { Footprint, MonitoringArea } from '@/models/monitoring-area.model'
 import { useAccount } from 'wagmi'
 import { Plot } from './Plot'
 import { useEffect, useState } from 'react'
-import { Weather, WeatherVariableDescription } from '@/models/weather.model'
+import {
+	HistoricalWeatherData,
+	Weather,
+	WeatherVariableDescription
+} from '@/models/weather.model'
 import weatherData from '../assets/json/weatherData.json'
 import weatherVariableDescriptionJson from '../assets/json/weather-variables-description.json'
 import axios, { AxiosResponse } from 'axios'
@@ -69,6 +73,9 @@ export function StatsModal(props: Props) {
 	const { address } = useAccount()
 
 	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [historicalWeather, setHistoricalWeather] = useState<
+		HistoricalWeatherData | null | any
+	>(null)
 	const [weather, setWeather] = useState<Weather | null | any>(null)
 
 	let coordinates: Coordinates | null = null
@@ -77,12 +84,11 @@ export function StatsModal(props: Props) {
 		coordinates = getLastCoordinates(geoJson.properties.footprint)
 	}
 
-	const getHistoriacalWeather = () => {
+	const getHistoriacalWeather = async (variableName: string) => {
 		setIsLoading(true)
-		setTimeout(() => {
-			console.log(weather)
-			setIsLoading(false)
-		}, 1000)
+		console.log('variableName :', variableName)
+		console.log('historial: ', historicalWeather)
+		setIsLoading(false)
 	}
 
 	const fetchWeatherData = async (coordinates: string) => {
@@ -91,7 +97,44 @@ export function StatsModal(props: Props) {
 			const response: AxiosResponse<any, any> = await axios.get(
 				`https://api.tomorrow.io/v4/weather/realtime?location=${coordinates}&apikey=${process.env.NEXT_PUBLIC_TOMORROW_API_KEY}`
 			)
+
+			let endDate = new Date(response.data.data.time)
+			endDate.setDate(endDate.getDate() - 7)
+
+			let StartDate = new Date(endDate)
+			StartDate.setDate(StartDate.getDate() - 30)
+
+			const data = {
+				location: coordinates,
+				fields: [
+					'cloudCover',
+					'dewPoint',
+					'humidity',
+					'pressureSurfaceLevel',
+					'temperature',
+					'windDirection',
+					'windGust',
+					'windSpeed'
+				],
+				timesteps: ['1d'],
+				startTime: StartDate.toISOString(),
+				endTime: endDate.toISOString()
+			}
+
+			const historicalWeatherResponse: AxiosResponse<any, any> =
+				await axios.post(
+					`https://api.tomorrow.io/v4/historical?apikey=${process.env.NEXT_PUBLIC_TOMORROW_API_KEY}`,
+					data,
+					{
+						headers: {
+							accept: 'application/json',
+							'content-type': 'application/json'
+						}
+					}
+				)
+
 			setWeather(response.data)
+			setHistoricalWeather(historicalWeatherResponse.data)
 			setIsLoading(false)
 		} catch (error) {
 			setWeather(weatherData)
@@ -233,6 +276,18 @@ export function StatsModal(props: Props) {
 													{weather?.data?.values &&
 														Object.entries(weather.data.values).map(
 															([key, value]: [string, any], index: number) => {
+																const validKeys: string[] = [
+																	'cloudCover',
+																	'dewPoint',
+																	'humidity',
+																	'pressureSurfaceLevel',
+																	'temperature',
+																	'windDirection',
+																	'windGust',
+																	'windSpeed'
+																]
+																const isValidKey: boolean =
+																	validKeys.includes(key)
 																return (
 																	<Tr key={index}>
 																		<Td
@@ -242,12 +297,20 @@ export function StatsModal(props: Props) {
 																			alignItems={'center'}
 																		>
 																			<Text
-																				_hover={{
-																					textDecoration: 'underline',
-																					color: 'blue.600',
-																					cursor: 'pointer'
-																				}}
-																				onClick={getHistoriacalWeather}
+																				_hover={
+																					isValidKey
+																						? {
+																								textDecoration: 'underline',
+																								color: 'blue.600',
+																								cursor: 'pointer'
+																						  }
+																						: {}
+																				}
+																				onClick={
+																					isValidKey
+																						? () => getHistoriacalWeather(key)
+																						: undefined
+																				}
 																			>
 																				{formatKey(key)}
 																			</Text>
