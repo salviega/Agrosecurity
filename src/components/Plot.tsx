@@ -12,12 +12,13 @@ import {
 	XAxis,
 	YAxis
 } from 'recharts'
+import { HistoricalWeatherData } from '@/models/weather.model'
 
 interface PlotData {
-	date: string
-	cover: number
-	forest: number
-	extension: number
+	date?: string
+	cover?: number
+	forest?: number
+	extension?: number
 }
 
 type GeoJsonData = GeoJSON.Feature<
@@ -31,18 +32,22 @@ type GeoJsonData = GeoJSON.Feature<
 }
 
 type Props = {
+	changeIsPlot: string
 	geoJson: GeoJsonData | null
+	historicalWeather: HistoricalWeatherData | null | any
 }
 
 export function Plot(props: Props) {
-	const { geoJson } = props
+	const { changeIsPlot, geoJson, historicalWeather } = props
 	let data
 
-	if (geoJson?.properties.imageTimeSeries) {
+	if (geoJson?.properties.imageTimeSeries && changeIsPlot === 'extension') {
 		data = reformatData(
 			geoJson.properties.imageTimeSeries,
 			geoJson.properties.extension
 		)
+	} else {
+		data = getWeatherValueByField(historicalWeather, changeIsPlot)
 	}
 
 	return (
@@ -54,7 +59,6 @@ export function Plot(props: Props) {
 					angle={-20}
 					fontSize={8}
 					tickMargin={14}
-					label={{ value: 'Date', position: 'insideBottomRight', offset: 0 }}
 					scale='band'
 				/>
 				<YAxis
@@ -88,5 +92,35 @@ function reformatData(
 		cover: parseFloat(forestCoverExtension[index]),
 		forest: parseFloat(forestCoverExtension[index]),
 		extension: parseFloat(extension)
+	}))
+}
+
+function getWeatherValueByField(
+	data: HistoricalWeatherData,
+	field: string
+): PlotData[] {
+	const weatherData = data.data.timelines[0].intervals
+	const startTimeList: string[] = []
+	const valuesList: number[] = []
+
+	for (const interval of weatherData) {
+		const startTime: string = interval.startTime
+		const value: number | undefined =
+			interval.values[field as keyof typeof interval.values]
+
+		if (typeof value === 'number') {
+			const date: Date = new Date(startTime)
+			const formattedDate: string = `${date.getFullYear()}-${
+				date.getMonth() + 1
+			}-${date.getDate()}`
+
+			startTimeList.push(formattedDate)
+			valuesList.push(value)
+		}
+	}
+	return startTimeList.map((time, index) => ({
+		date: time,
+		cover: valuesList[index],
+		forest: valuesList[index]
 	}))
 }

@@ -72,6 +72,7 @@ export function StatsModal(props: Props) {
 
 	const { address } = useAccount()
 
+	const [changeIsPlot, setChangeIsPlot] = useState<string>('extension')
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [historicalWeather, setHistoricalWeather] = useState<
 		HistoricalWeatherData | null | any
@@ -85,10 +86,9 @@ export function StatsModal(props: Props) {
 	}
 
 	const getHistoriacalWeather = async (variableName: string) => {
-		setIsLoading(true)
-		console.log('variableName :', variableName)
-		console.log('historial: ', historicalWeather)
-		setIsLoading(false)
+		console.log(historicalWeather)
+		console.log(variableName)
+		setChangeIsPlot(variableName)
 	}
 
 	const fetchWeatherData = async (coordinates: string) => {
@@ -147,6 +147,7 @@ export function StatsModal(props: Props) {
 			fetchWeatherData(`${coordinates?.latitude},${coordinates?.longitude}`)
 		} else {
 			setWeather(null)
+			setChangeIsPlot('extension')
 		}
 	}, [isOpen])
 
@@ -380,7 +381,11 @@ export function StatsModal(props: Props) {
 												/>
 											</Box>
 										) : (
-											<Plot geoJson={geoJson} />
+											<Plot
+												changeIsPlot={changeIsPlot}
+												geoJson={geoJson}
+												historicalWeather={historicalWeather}
+											/>
 										)}
 									</Box>
 								</Box>
