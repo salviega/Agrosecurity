@@ -13,6 +13,7 @@ import {
 	YAxis
 } from 'recharts'
 import { HistoricalWeatherData } from '@/models/weather.model'
+import { formatKey } from '@/functions/functions'
 
 interface PlotData {
 	date?: string
@@ -64,7 +65,7 @@ export function Plot(props: Props) {
 				<YAxis
 					fontSize={8}
 					label={{
-						value: 'Extension ha',
+						value: formatKey(changeIsPlot),
 						angle: -90,
 						position: 'insideLeft',
 						offset: 0

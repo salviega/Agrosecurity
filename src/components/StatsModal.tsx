@@ -39,10 +39,15 @@ import {
 } from '@/models/weather.model'
 import weatherData from '../assets/json/weatherData.json'
 import weatherVariableDescriptionJson from '../assets/json/weather-variables-description.json'
+import weatherVariableUnitJson from '../assets/json/weather-variable-unit.json'
+
 import axios, { AxiosResponse } from 'axios'
+import { formatKey } from '@/functions/functions'
 
 const weatherVariableDescription: WeatherVariableDescription =
 	weatherVariableDescriptionJson
+
+const unitsMapping: { [key: string]: string } = weatherVariableUnitJson
 
 interface Coordinates {
 	latitude: string
@@ -86,8 +91,6 @@ export function StatsModal(props: Props) {
 	}
 
 	const getHistoriacalWeather = async (variableName: string) => {
-		console.log(historicalWeather)
-		console.log(variableName)
 		setChangeIsPlot(variableName)
 	}
 
@@ -132,7 +135,7 @@ export function StatsModal(props: Props) {
 						}
 					}
 				)
-
+			console.log(response.data)
 			setWeather(response.data)
 			setHistoricalWeather(historicalWeatherResponse.data)
 			setIsLoading(false)
@@ -277,6 +280,7 @@ export function StatsModal(props: Props) {
 													{weather?.data?.values &&
 														Object.entries(weather.data.values).map(
 															([key, value]: [string, any], index: number) => {
+																if (key === 'weatherCode') return
 																const validKeys: string[] = [
 																	'cloudCover',
 																	'dewPoint',
@@ -289,6 +293,7 @@ export function StatsModal(props: Props) {
 																]
 																const isValidKey: boolean =
 																	validKeys.includes(key)
+
 																return (
 																	<Tr key={index}>
 																		<Td
@@ -345,7 +350,40 @@ export function StatsModal(props: Props) {
 																			</Popover>
 																		</Td>
 																		<Td fontSize={'xs'} textAlign={'right'}>
-																			{value.toString()}
+																			<Box display={'flex'}>
+																				{value.toString()}
+																				{typeof unitsMapping[key] ===
+																				'string' ? (
+																					<Text
+																						marginLeft={1}
+																						fontSize='xs'
+																						color='gray.500'
+																					>
+																						{unitsMapping[key]}
+																					</Text>
+																				) : Array.isArray(unitsMapping[key]) ? (
+																					<Text
+																						marginLeft={1}
+																						fontSize='xs'
+																						color='gray.500'
+																					>
+																						{Object.entries(unitsMapping[key])
+																							.map(
+																								([range, unit]) =>
+																									`${range}: ${unit}`
+																							)
+																							.join(', ')}
+																					</Text>
+																				) : null}
+																				{typeof unitsMapping[key] ===
+																				'object' ? (
+																					<Text
+																						marginLeft={1}
+																						fontSize='xs'
+																						color='gray.500'
+																					></Text>
+																				) : null}
+																			</Box>
 																		</Td>
 																	</Tr>
 																)
@@ -439,11 +477,4 @@ function getLastCoordinates(footprint: Footprint[]): Coordinates {
 		latitude: lastFootprint.latitude,
 		longitude: lastFootprint.longitude
 	}
-}
-
-function formatKey(key: string): string {
-	let words: string[] = key.split(/(?=[A-Z])/) // This splits the string into words at each uppercase letter.
-	return words
-		.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-		.join(' ')
 }

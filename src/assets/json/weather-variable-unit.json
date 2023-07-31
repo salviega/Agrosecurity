@@ -1,0 +1,34 @@
+{
+	"cloudBase": "km",
+	"cloudCeiling": "km",
+	"cloudCover": "%",
+	"dewPoint": "°C",
+	"freezingRainIntensity": "mm/hr",
+	"humidity": "%",
+	"precipitationProbability": "%",
+	"pressureSurfaceLevel": "hPa",
+	"rainIntensity": "mm/hr",
+	"sleetIntensity": "mm/hr",
+	"snowIntensity": "mm",
+	"temperature": "°C",
+	"temperatureApparent": "°C",
+	"uvHealthConcern": {
+		"0-2": "Low",
+		"3-5": "Moderate",
+		"6-7": "High",
+		"8-10": "Very High",
+		"11+": "Extreme"
+	},
+	"uvIndex": {
+		"0-2": "Low",
+		"3-5": "Moderate",
+		"6-7": "High",
+		"8-10": "Very High",
+		"11+": "Extreme"
+	},
+	"visibility": "km",
+	"weatherCode": "",
+	"windDirection": "degrees",
+	"windGust": "m/s",
+	"windSpeed": "m/s"
+}
